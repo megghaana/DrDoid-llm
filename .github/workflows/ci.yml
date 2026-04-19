@@ -44,7 +44,7 @@ jobs:
       # Check the file exists before linting so CI gives a clear error if path is wrong
       - name: Check compare script exists
         run: |
-          test -f compare/compare_models.py || (echo "ERROR: compare/compare_models.py not found" && exit 1)
+          test -f compare_models.py || (echo "ERROR: compare_models.py not found" && exit 1)
 
       - name: Lint
         run: flake8 compare/compare_models.py --max-line-length=120 --ignore=E501,W503
