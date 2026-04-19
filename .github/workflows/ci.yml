@@ -69,13 +69,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: [validate-manifests, build-image]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      IMAGE_NAME: oracle-llm
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check Docker Hub secrets
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          test -n "$DOCKERHUB_USERNAME" || (echo "ERROR: Missing repository secret DOCKERHUB_USERNAME" && exit 1)
+          test -n "$DOCKERHUB_TOKEN" || (echo "ERROR: Missing repository secret DOCKERHUB_TOKEN" && exit 1)
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
@@ -84,5 +94,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/oracle-llm:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/oracle-llm:${{ github.sha }}
+            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
