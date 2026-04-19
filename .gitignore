@@ -1,0 +1,22 @@
+cat > .gitignore << 'EOF'
+# Python
+__pycache__/
+*.py[cod]
+.env
+venv/
+comparison_results_*.json
+comparison_report_*.md
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets — never commit these
+*.key
+*.pem
+secrets.yaml
+Grafana error.mp4
+EOF
